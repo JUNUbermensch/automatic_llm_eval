@@ -1,0 +1,6 @@
+streamlit
+io
+xlsxwriter
+pandas
+json
+requests
