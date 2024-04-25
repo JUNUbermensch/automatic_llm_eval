@@ -1,6 +1,4 @@
-streamlit
-io
-xlsxwriter
 pandas
-json
 requests
+streamlit
+xlsxwriter
