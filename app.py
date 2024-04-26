@@ -29,20 +29,20 @@ if 'result_file' not in st.session_state:
     st.session_state['result_file'] = None
     
 # 다운로드 버튼을 배치하는 함수
-def button_placeholder():
+def button_placeholder(key):
     result_file = st.session_state.get('result_file', None)
     if result_file is not None:
-        st.download_button("저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=key)
     else:
-        st.download_button("저장", "", "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", disabled=True)
+        st.download_button("결과저장", "", "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", disabled=True, key=key)
 
-button_placeholder()
+button_placeholder("평가중")
 
 uploaded_file = st.file_uploader("아래에 엑셀 파일을 업로드해주세요.", type=['xlsx']) # streamlit에서 업로드할 파일 불러옴
 
 if uploaded_file is not None:
     data_df = pd.read_excel(uploaded_file) # pd 메서드를 이용해서 변수로 파일 저장
-    save_df = pd.DataFrame(columns=['입력','예상 답변','생성형 답변','생성형 점수','추출형 답변','추출형 점수'])
+    save_df = pd.DataFrame(columns=['입력','생성형 답변','예상 답변','생성형 점수','추출형 답변','추출형 점수'])
     
     server_num = '29'
     torchserve_address = f'211.39.140.{server_num}:9090'
@@ -66,7 +66,7 @@ if uploaded_file is not None:
             ext = result['choices'][0]['message']['content'][1][0]
             gen_scr = LCS(label,gen)
             ext_scr = LCS(label,ext)
-            save_df.loc[len(save_df)] = [input_data,label,gen,gen_scr,ext,ext_scr]
+            save_df.loc[len(save_df)] = [input_data,gen,label,gen_scr,ext,ext_scr]
         else:
             st.error(f"Failed to get response from model server for row {index}")
         
@@ -75,7 +75,7 @@ if uploaded_file is not None:
     if not save_df.empty:
         result_file = convert_df(save_df)
         st.session_state['result_file'] = result_file
-        button_placeholder()
+        button_placeholder("평가완료")
 
     # 결과 파일 다운로드 버튼 생성 및 다운로드 버튼에 넣을 문구 표기
     st.write("평가 완료")
