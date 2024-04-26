@@ -34,8 +34,8 @@ def button_placeholder(key):
     if result_file is not None:
         st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=key)
     else:
-        st.download_button("결과저장", "", "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", disabled=True, key=key)
-
+        pass
+    
 button_placeholder("평가중")
 
 uploaded_file = st.file_uploader("아래에 엑셀 파일을 업로드해주세요.", type=['xlsx']) # streamlit에서 업로드할 파일 불러옴
