@@ -44,7 +44,7 @@ if uploaded_file is not None:
             for index,data in tqdm(data_df.iterrows()):
                 try:
                     input_data = str(data['입력'])
-                    label = data['예상 답변']
+                    label = str(data['예상 답변'])
                 except Exception as e:
                     st.write(f"{e} in index {index}")
                 messages = [
@@ -61,13 +61,9 @@ if uploaded_file is not None:
                 
                 prediction = []
                 
-                # 결과를 실시간으로 받아옵니다.
                 for chunk in (response.iter_content(chunk_size=None)):
-                    try:
-                        data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
-                        message = data["choices"][0]["delta"]["content"]
-                    except:
-                        pass
+                    data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
+                    message = data["choices"][0]["delta"]["content"]
                 score = LCS(label,message)
                 save_df.loc[len(save_df)] = [input_data,label,message,score]
             else:
