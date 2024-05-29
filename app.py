@@ -53,8 +53,8 @@ if uploaded_file is not None:
                 # POST 요청을 보내서 요약 결과를 가져옵니다.
                 response = requests.post(
                     port,
-                    data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
-                    stream=True
+                    data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": False}),
+                    stream=False
                 )
                 
                 prediction = []
