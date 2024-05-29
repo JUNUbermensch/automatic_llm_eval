@@ -36,6 +36,7 @@ if uploaded_file is not None:
     save_df = pd.DataFrame(columns=['입력','예상 답변','답변','점수'])
 
     user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200)
+    # ex) 다음 질문에 한국어로 답변해주세요.
     if user_input:
         port = st.text_area("포트를 입력하세요:", height=200)
         # http://211.39.140.232:9090/v1/chat/completions
@@ -46,9 +47,10 @@ if uploaded_file is not None:
                     label = data['예상 답변']
                 except Exception as e:
                     st.write(f"{e} in index {index}")
-                messages = [
-                    {user_input}, {input_data}
-                ]
+                messages = {
+                    {"role": "system", "content": user_input},
+                    {"role": "user", "content": input_data}
+                }
                 
                 # POST 요청을 보내서 요약 결과를 가져옵니다.
                 response = requests.post(
