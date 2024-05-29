@@ -71,7 +71,7 @@ if st.button("요약하기"):
             data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
             stream=True
         )
-
+        
         prediction = []
         summary_placeholder = st.empty()  # 빈 위치 확보
         max_line_length = 50  # 한 줄에 표시할 최대 글자 수
@@ -79,15 +79,18 @@ if st.button("요약하기"):
         # 결과를 실시간으로 받아옵니다.
         for chunk in response.iter_content(chunk_size=None):
             try:
-                data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
-                message = data["choices"][0]["delta"]["content"]
-                prediction.append(message)
-                # 기존 내용에 새로 받은 내용을 추가하여 출력
-                current_text = "".join(prediction)
-                wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
-                summary_placeholder.text(wrapped_text)
-            except:
-                pass
+                chunk_data = chunk.decode("utf-8").split("data: ")[-1].strip()
+                if chunk_data:
+                    data = json.loads(chunk_data)
+                    if "choices" in data and len(data["choices"]) > 0:
+                        message = data["choices"][0]["delta"]["content"]
+                        prediction.append(message)
+                        # 기존 내용에 새로 받은 내용을 추가하여 출력
+                        current_text = "".join(prediction)
+                        wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
+                        summary_placeholder.text(wrapped_text)
+            except Exception as e:
+                st.write(f"Error: {e}")
         
         # 전체 요약 결과를 화면에 표시합니다.
         st.text_area("요약 결과", "".join(prediction), height=200)
