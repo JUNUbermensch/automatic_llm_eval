@@ -63,15 +63,14 @@ if uploaded_file is not None:
                     stream=False
                 )
                 
-                prediction = []
-                
-                for chunk in (response.iter_content(chunk_size=None)):
-                    data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
-                    message = data["choices"][0]["delta"]["content"]
-                score = LCS(label,message)
-                save_df.loc[len(save_df)] = [input_data,label,message,score]
-            else:
-                st.warning("문서를 입력해주세요.")
+                if response.status_code == 200:
+                    response_data = response.json()
+                    try:
+                        message = response_data["choices"][0]["message"]["content"]
+                        score = LCS(label, message)
+                        save_df.loc[len(save_df)] = [input_data, label, message, score]
+                    except Exception as e:
+                        st.write(f"{index}행을 처리하는 도중 오류가 발생했습니다.: {e}")
             # 전체 요약 결과를 화면에 표시합니다.
         
     if not save_df.empty:
