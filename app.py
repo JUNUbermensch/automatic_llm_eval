@@ -41,11 +41,10 @@ if uploaded_file is not None:
         # http://211.39.140.232:9090/v1/chat/completions
         if port:
             for index,data in tqdm(data_df.iterrows()):
-                formats = user_input
                 try:
                     input_data = eval(data['입력'])
                     label = data['예상 답변']
-                    formats = user_input + input_data
+                    formats = str(user_input) + str(input_data)
                 except Exception as e:
                     st.write(f"{e} in index {index}")
                 messages = [
