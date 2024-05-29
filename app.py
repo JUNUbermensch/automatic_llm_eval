@@ -47,10 +47,10 @@ if uploaded_file is not None:
                     label = data['예상 답변']
                 except Exception as e:
                     st.write(f"{e} in index {index}")
-                messages = {
+                messages = [
                     {"role": "system", "content": user_input},
                     {"role": "user", "content": input_data}
-                }
+                ]
                 
                 # POST 요청을 보내서 요약 결과를 가져옵니다.
                 response = requests.post(
