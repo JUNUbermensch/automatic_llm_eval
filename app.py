@@ -87,7 +87,6 @@ if uploaded_file is not None:
                 answer = "".join(map(str, prediction))
                 score = 0 # LCS(label,answer)
                 save_df.loc[len(save_df)] = [input_data,label,answer,score]
-                st.text_area("요약 결과", "".join(prediction), height=200)
             else:
                 st.warning("문서를 입력해주세요.")
             # 전체 요약 결과를 화면에 표시합니다.
