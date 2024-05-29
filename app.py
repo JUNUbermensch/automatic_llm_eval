@@ -38,8 +38,8 @@ if uploaded_file is not None:
     user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200)
     port = st.text_area("포트를 입력하세요:", height=200)
     # http://211.39.140.232:9090/v1/chat/completions
-    for index,data in tqdm(data_df.iterrows()):
-        if user_input:
+    if user_input and user_input:
+        for index,data in tqdm(data_df.iterrows()):
             formats = f'''{user_input}'''
             
             messages = [
