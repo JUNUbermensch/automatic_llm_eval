@@ -17,7 +17,7 @@ def LCS(s1, s2):
                 m[x][y] = max(m[x - 1][y], m[x][y - 1])
     return round(m[len(s1)][len(s2)]/len(s2),2)
     
-st.title("Automatic Evaluator & Summarizaer") # app 제목
+st.title("Automatic Evaluator & Wisenut Llama") # app 제목
 
 def convert_df(df):
     output = io.BytesIO() # BytesIO buffer 생성
@@ -29,7 +29,7 @@ def convert_df(df):
 if 'result_file' not in st.session_state:
     st.session_state['result_file'] = None
 
-uploaded_file = st.file_uploader("아래에 엑셀 파일을 업로드해주세요.", type=['xlsx']) # streamlit에서 업로드할 파일 불러옴
+uploaded_file = st.file_uploader("아래에 평가를 위한 엑셀 파일을 업로드해주세요.", type=['xlsx']) # streamlit에서 업로드할 파일 불러옴
 
 if uploaded_file is not None:
     data_df = pd.read_excel(uploaded_file) # sample.xlsx 대신 불러올 엑셀 파일명 입력 - 이 스크립트와 같은 폴더 내에 있어야 합니다.
