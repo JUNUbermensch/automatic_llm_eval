@@ -43,7 +43,7 @@ if uploaded_file is not None:
     # ex) 다음 질문에 한국어로 답변해주세요.
     if user_input:
         port = st.text_area("포트를 입력하세요:", height=200)
-        # http://211.39.140.232:9090/v1/chat/completions
+        # ex) http://211.39.140.232:9090/v1/chat/completions
         if port:
             for index,data in tqdm(data_df.iterrows()):
                 try:
@@ -71,8 +71,8 @@ if uploaded_file is not None:
                         save_df.loc[len(save_df)] = [input_data, label, message, score]
                     except Exception as e:
                         st.write(f"{index}행을 처리하는 도중 오류가 발생했습니다.: {e}")
-            # 전체 요약 결과를 화면에 표시합니다.
-        
+                st.write(f"{index}번째 행 처리중입니다.")
+            
     if not save_df.empty:
         result_file = convert_df(save_df)
         st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
