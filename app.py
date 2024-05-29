@@ -74,6 +74,7 @@ if st.button("요약하기"):
 
         prediction = []
         summary_placeholder = st.empty()  # 빈 위치 확보
+        max_line_length = 50  # 한 줄에 표시할 최대 글자 수
         
         # 결과를 실시간으로 받아옵니다.
         for chunk in response.iter_content(chunk_size=None):
@@ -82,7 +83,9 @@ if st.button("요약하기"):
                 message = data["choices"][0]["delta"]["content"]
                 prediction.append(message)
                 # 기존 내용에 새로 받은 내용을 추가하여 출력
-                summary_placeholder.text("".join(prediction))
+                current_text = "".join(prediction)
+                wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
+                summary_placeholder.text(wrapped_text)
             except:
                 pass
         
