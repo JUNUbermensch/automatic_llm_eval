@@ -6,6 +6,7 @@ from tqdm import tqdm
 import requests
 import json
 import textwrap
+import re
 
 def LCS(s1, s2):
     m = [[0] * (1 + len(s2)) for _ in range(1 + len(s1))]
@@ -18,6 +19,9 @@ def LCS(s1, s2):
     return round(m[len(s1)][len(s2)]/len(s2),2)
     
 st.title("Automatic Evaluator") # app 제목
+
+def clean_text(text):
+    return re.sub(r'[^\w\s]', '', text)
 
 def convert_df(df):
     output = io.BytesIO() # BytesIO buffer 생성
@@ -43,8 +47,8 @@ if uploaded_file is not None:
         if port:
             for index,data in tqdm(data_df.iterrows()):
                 try:
-                    input_data = str(data['입력'])
-                    label = str(data['예상 답변'])
+                    input_data = clean_text(str(data['입력']))
+                    label = clean_text(str(data['예상 답변']))
                 except Exception as e:
                     st.write(f"{e} in index {index}")
                 messages = [
