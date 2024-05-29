@@ -44,11 +44,10 @@ if uploaded_file is not None:
                 try:
                     input_data = eval(data['입력'])
                     label = data['예상 답변']
-                    formats = str(user_input) + str(input_data)
                 except Exception as e:
                     st.write(f"{e} in index {index}")
                 messages = [
-                    {formats},
+                    {user_input}, {input_data}
                 ]
                 
                 # POST 요청을 보내서 요약 결과를 가져옵니다.
