@@ -80,18 +80,24 @@ if st.button("요약하기"):
         # 결과를 실시간으로 받아옵니다.
         for chunk in response.iter_content(chunk_size=None):
             try:
-                chunk_data = chunk.decode("utf-8").split("data: ")[-1].strip()
+                chunk_data = chunk.decode("utf-8").strip()
                 if chunk_data:
-                    data = json.loads(chunk_data)
-                    if "choices" in data and len(data["choices"]) > 0:
-                        message = data["choices"][0]["delta"]["content"]
-                        prediction.append(message)
-                        # 기존 내용에 새로 받은 내용을 추가하여 출력
-                        current_text = "".join(prediction)
-                        wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
-                        summary_placeholder.text(wrapped_text)
+                    # JSON 데이터에서 유효한 부분만 추출
+                    json_data = chunk_data.split("data: ")[-1]
+                    if json_data:
+                        data = json.loads(json_data)
+                        if "choices" in data and len(data["choices"]) > 0:
+                            message = data["choices"][0].get("delta", {}).get("content", "")
+                            if message:
+                                prediction.append(message)
+                                # 기존 내용에 새로 받은 내용을 추가하여 출력
+                                current_text = "".join(prediction)
+                                wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
+                                summary_placeholder.text(wrapped_text)
+            except json.JSONDecodeError as e:
+                pass
             except Exception as e:
-                st.write(f"Error: {e}")
+                pass
         
         # 전체 요약 결과를 화면에 표시합니다.
         st.text_area("요약 결과", "".join(prediction), height=200)
