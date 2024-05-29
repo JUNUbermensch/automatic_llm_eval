@@ -4,4 +4,3 @@ xlsxwriter
 tqdm
 requests
 openpyxl
-textwrap
