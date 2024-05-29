@@ -3,6 +3,8 @@ import pandas as pd
 import streamlit as st
 import io
 from tqdm import tqdm
+import requests
+import json
 
 def LCS(s1, s2):
     m = [[0] * (1 + len(s2)) for _ in range(1 + len(s1))]
@@ -14,7 +16,7 @@ def LCS(s1, s2):
                 m[x][y] = max(m[x - 1][y], m[x][y - 1])
     return round(m[len(s1)][len(s2)]/len(s2),2)
     
-st.title("Automatic Evaluator") # app 제목
+st.title("Automatic Evaluator & Summarizaer") # app 제목
 
 def convert_df(df):
     output = io.BytesIO() # BytesIO buffer 생성
@@ -50,3 +52,40 @@ if uploaded_file is not None:
         st.write("평가 완료")
 else:
     st.write("엑셀 파일을 업로드 해주세요.")
+
+
+# Streamlit을 통해 사용자로부터 입력을 받습니다.
+user_input = st.text_area("요약할 문서를 입력하세요:", height=200)
+
+if st.button("요약하기"):
+    if user_input:
+        formats = f'''주어진 문서를 간단하게 요약해줘: {user_input}'''
+        
+        messages = [
+            {"role": "user", "content": formats},
+        ]
+        
+        # POST 요청을 보내서 요약 결과를 가져옵니다.
+        response = requests.post(
+            "http://211.39.140.232:9090/v1/chat/completions",
+            data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
+            stream=True
+        )
+        
+        prediction = []
+        before = ""
+        
+        # 결과를 실시간으로 받아옵니다.
+        for chunk in response.iter_content(chunk_size=None):
+            try:
+                data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
+                message = data["choices"][0]["delta"]["content"]
+                prediction.append(message)
+                st.write(message, end='', flush=True)
+            except:
+                pass
+        
+        # 전체 요약 결과를 화면에 표시합니다.
+        st.write("".join(prediction))
+    else:
+        st.warning("문서를 입력해주세요.")
