@@ -42,7 +42,7 @@ if uploaded_file is not None:
         if port:
             for index,data in tqdm(data_df.iterrows()):
                 try:
-                    input_data = eval(data['입력'])
+                    input_data = str(data['입력'])
                     label = data['예상 답변']
                 except Exception as e:
                     st.write(f"{e} in index {index}")
