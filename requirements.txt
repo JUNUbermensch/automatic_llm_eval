@@ -3,5 +3,4 @@ streamlit
 xlsxwriter
 tqdm
 requests
-json
 openpyxl
