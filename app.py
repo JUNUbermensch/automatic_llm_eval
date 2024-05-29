@@ -38,60 +38,60 @@ if uploaded_file is not None:
     user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200)
     if user_input:
         port = st.text_area("포트를 입력하세요:", height=200)
-    # http://211.39.140.232:9090/v1/chat/completions
-    if port:
-        for index,data in tqdm(data_df.iterrows()):
-            formats = f'''{user_input}'''
-            
-            messages = [
-                {"role": "user", "content": formats},
-            ]
-            
-            # POST 요청을 보내서 요약 결과를 가져옵니다.
-            response = requests.post(
-                port,
-                data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
-                stream=True
-            )
-            
-            prediction = []
-            summary_placeholder = st.empty()  # 빈 위치 확보
-            max_line_length = 50  # 한 줄에 표시할 최대 글자 수
-            
-            # 결과를 실시간으로 받아옵니다.
-            for chunk in response.iter_content(chunk_size=None):
-                try:
-                    chunk_data = chunk.decode("utf-8").strip()
-                    if chunk_data:
-                        # JSON 데이터에서 유효한 부분만 추출
-                        json_data = chunk_data.split("data: ")[-1]
-                        if json_data:
-                            data = json.loads(json_data)
-                            if "choices" in data and len(data["choices"]) > 0:
-                                message = data["choices"][0].get("delta", {}).get("content", "")
-                                if message:
-                                    prediction.append(message)
-                                    # 기존 내용에 새로 받은 내용을 추가하여 출력
-                                    current_text = "".join(prediction)
-                                    wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
-                                    summary_placeholder.text(wrapped_text)
-                except json.JSONDecodeError as e:
-                    pass
-                except Exception as e:
-                    pass
+        # http://211.39.140.232:9090/v1/chat/completions
+        if port:
+            for index,data in tqdm(data_df.iterrows()):
+                formats = f'''{user_input}'''
+                
+                messages = [
+                    {"role": "user", "content": formats},
+                ]
+                
+                # POST 요청을 보내서 요약 결과를 가져옵니다.
+                response = requests.post(
+                    port,
+                    data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
+                    stream=True
+                )
+                
+                prediction = []
+                summary_placeholder = st.empty()  # 빈 위치 확보
+                max_line_length = 50  # 한 줄에 표시할 최대 글자 수
+                
+                # 결과를 실시간으로 받아옵니다.
+                for chunk in response.iter_content(chunk_size=None):
+                    try:
+                        chunk_data = chunk.decode("utf-8").strip()
+                        if chunk_data:
+                            # JSON 데이터에서 유효한 부분만 추출
+                            json_data = chunk_data.split("data: ")[-1]
+                            if json_data:
+                                data = json.loads(json_data)
+                                if "choices" in data and len(data["choices"]) > 0:
+                                    message = data["choices"][0].get("delta", {}).get("content", "")
+                                    if message:
+                                        prediction.append(message)
+                                        # 기존 내용에 새로 받은 내용을 추가하여 출력
+                                        current_text = "".join(prediction)
+                                        wrapped_text = "\n".join(textwrap.wrap(current_text, max_line_length))
+                                        summary_placeholder.text(wrapped_text)
+                    except json.JSONDecodeError as e:
+                        pass
+                    except Exception as e:
+                        pass
+                st.text_area("요약 결과", "".join(prediction), height=200)
+            else:
+                st.warning("문서를 입력해주세요.")
+            # 전체 요약 결과를 화면에 표시합니다.
             st.text_area("요약 결과", "".join(prediction), height=200)
-        else:
-            st.warning("문서를 입력해주세요.")
-        # 전체 요약 결과를 화면에 표시합니다.
-        st.text_area("요약 결과", "".join(prediction), height=200)
-        try:
-            input_data = eval(data['입력'])
-            label = data['예상 답변']
-            answer = user_input + prediction
-            score = LCS(label,answer)
-            save_df.loc[len(save_df)] = [input_data,label,answer,score]
-        except Exception as e:
-            st.write(f"{e} in index {index}")
+            try:
+                input_data = eval(data['입력'])
+                label = data['예상 답변']
+                answer = user_input + prediction
+                score = LCS(label,answer)
+                save_df.loc[len(save_df)] = [input_data,label,answer,score]
+            except Exception as e:
+                st.write(f"{e} in index {index}")
         
     if not save_df.empty:
         result_file = convert_df(save_df)
