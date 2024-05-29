@@ -56,11 +56,11 @@ else:
 
 
 # Streamlit을 통해 사용자로부터 입력을 받습니다.
-user_input = st.text_area("요약할 문서를 입력하세요:", height=200)
+user_input = st.text_area("텍스트와 인스트럭션을 입력하세요:", height=200)
 
 if st.button("요약하기"):
     if user_input:
-        formats = f'''주어진 문서를 간단하게 요약해줘: {user_input}'''
+        formats = f'''{user_input}'''
         
         messages = [
             {"role": "user", "content": formats},
