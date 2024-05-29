@@ -41,10 +41,15 @@ if uploaded_file is not None:
         # http://211.39.140.232:9090/v1/chat/completions
         if port:
             for index,data in tqdm(data_df.iterrows()):
-                formats = f'''{user_input}'''
-                
+                formats = user_input
+                try:
+                    input_data = eval(data['입력'])
+                    label = data['예상 답변']
+                    formats = user_input + prediction
+                except Exception as e:
+                    st.write(f"{e} in index {index}")
                 messages = [
-                    {"role": "user", "content": formats},
+                    {formats},
                 ]
                 
                 # POST 요청을 보내서 요약 결과를 가져옵니다.
@@ -79,19 +84,13 @@ if uploaded_file is not None:
                         pass
                     except Exception as e:
                         pass
+                score = LCS(label,formats)
+                answer = "".join(map(str, prediction))
+                save_df.loc[len(save_df)] = [input_data,label,answer,score]
                 st.text_area("요약 결과", "".join(prediction), height=200)
             else:
                 st.warning("문서를 입력해주세요.")
             # 전체 요약 결과를 화면에 표시합니다.
-            st.text_area("요약 결과", "".join(prediction), height=200)
-            try:
-                input_data = eval(data['입력'])
-                label = data['예상 답변']
-                answer = user_input + prediction
-                score = LCS(label,answer)
-                save_df.loc[len(save_df)] = [input_data,label,answer,score]
-            except Exception as e:
-                st.write(f"{e} in index {index}")
         
     if not save_df.empty:
         result_file = convert_df(save_df)
