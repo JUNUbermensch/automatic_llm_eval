@@ -84,8 +84,8 @@ if uploaded_file is not None:
                         pass
                     except Exception as e:
                         pass
-                score = LCS(label,formats)
                 answer = "".join(map(str, prediction))
+                score = LCS(label,answer)
                 save_df.loc[len(save_df)] = [input_data,label,answer,score]
                 st.text_area("요약 결과", "".join(prediction), height=200)
             else:
