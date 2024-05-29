@@ -71,9 +71,9 @@ if st.button("요약하기"):
             data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": True}),
             stream=True
         )
-        
+
         prediction = []
-        before = ""
+        summary_placeholder = st.empty()  # 빈 위치 확보
         
         # 결과를 실시간으로 받아옵니다.
         for chunk in response.iter_content(chunk_size=None):
@@ -81,11 +81,12 @@ if st.button("요약하기"):
                 data = json.loads(chunk.decode("utf-8").split("data: ")[-1])
                 message = data["choices"][0]["delta"]["content"]
                 prediction.append(message)
-                st.write(message, end='', flush=True)
+                # 기존 내용에 새로 받은 내용을 추가하여 출력
+                summary_placeholder.text("".join(prediction))
             except:
                 pass
         
         # 전체 요약 결과를 화면에 표시합니다.
-        st.write("".join(prediction))
+        st.text_area("요약 결과", "".join(prediction), height=200)
     else:
         st.warning("문서를 입력해주세요.")
