@@ -70,10 +70,10 @@ if uploaded_file is not None:
                         score = LCS(label, message)
                         save_df.loc[len(save_df)] = [input_data, label, message, score]
                     except Exception as e:
-                        st.write(f"{index}행을 처리하는 도중 오류가 발생했습니다.: {e}")
+                        st.write(f"{index+1}행을 처리하는 도중 오류가 발생했습니다.: {e}")
                 else:
-                    st.write(f"{index}번째 행 처리 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
-                st.write(f"{index}번째 행 처리중입니다.")
+                    st.write(f"{index+1}번째 행 처리 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
+                st.write(f"{index+1}번째 행 처리중입니다.")
             
     if not save_df.empty:
         result_file = convert_df(save_df)
