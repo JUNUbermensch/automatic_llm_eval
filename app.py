@@ -36,9 +36,10 @@ if uploaded_file is not None:
     save_df = pd.DataFrame(columns=['입력','예상 답변','답변','점수'])
 
     user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200)
-    port = st.text_area("포트를 입력하세요:", height=200)
+    if user_input:
+        port = st.text_area("포트를 입력하세요:", height=200)
     # http://211.39.140.232:9090/v1/chat/completions
-    if user_input and user_input:
+    if port:
         for index,data in tqdm(data_df.iterrows()):
             formats = f'''{user_input}'''
             
