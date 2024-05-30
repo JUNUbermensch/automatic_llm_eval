@@ -46,7 +46,7 @@ if uploaded_file is not None and st.session_state['step'] == 0:
     st.experimental_rerun()
 
 if st.session_state['step'] == 1:
-    user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200, value="다음 질문에 한국어로 답변해줘")
+    user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200, value="You are an artificial intelligence assistant that answers in Korean. You can find the answer to the user's question below in the document pool below and answer it in Korean. And, the documents below may or may not have the correct answer.")
     if st.button("다음"):
         st.session_state['user_input'] = user_input
         st.session_state['step'] = 2
