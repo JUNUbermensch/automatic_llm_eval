@@ -27,7 +27,7 @@ def convert_df(df):
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, index=False)
     output.seek(0)
-    return output.getvalue()
+    return output
 
 if 'result_file' not in st.session_state:
     st.session_state['result_file'] = None
@@ -115,6 +115,7 @@ if st.session_state['step'] == 5:
     
     if not save_df.empty:
         result_file = convert_df(save_df)
-        st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        st.session_state['result_file'] = result_file
+        st.download_button("결과저장", data=result_file, file_name="result.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         st.write("평가 완료")
         uploaded_file = None
