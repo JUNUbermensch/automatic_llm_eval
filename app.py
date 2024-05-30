@@ -113,5 +113,3 @@ if st.session_state['step'] == 5:
         result_file = convert_df(save_df)
         st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         st.write("평가 완료")
-else:
-    st.write("엑셀 파일을 업로드 해주세요.")
