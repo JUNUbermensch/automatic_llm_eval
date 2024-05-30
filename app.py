@@ -5,6 +5,7 @@ from tqdm import tqdm
 import requests
 import json
 import re
+from time import sleep
 
 def LCS(s1, s2):
     m = [[0] * (1 + len(s2)) for _ in range(1 + len(s1))]
@@ -82,7 +83,7 @@ if st.session_state['step'] == 5:
     
     for index, data in tqdm(data_df.iterrows()):
         if index // 10 == 0:
-            time.sleep(3)
+            sleep(3)
             st.write(f"3초간 프로세싱을 중단합니다.")
         try:
             input_data = clean_text(str(data['입력']))
