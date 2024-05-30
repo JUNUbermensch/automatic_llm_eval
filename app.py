@@ -81,6 +81,9 @@ if st.session_state['step'] == 5:
     frequency_penalty = st.session_state['frequency_penalty']
     
     for index, data in tqdm(data_df.iterrows()):
+        if index // 10 == 0:
+            time.sleep(3)
+            st.write(f"3초간 프로세싱을 중단합니다.")
         try:
             input_data = clean_text(str(data['입력']))
             label = clean_text(str(data['예상 답변']))
