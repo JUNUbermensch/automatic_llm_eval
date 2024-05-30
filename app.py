@@ -82,7 +82,7 @@ if st.session_state['step'] == 5:
     frequency_penalty = st.session_state['frequency_penalty']
     
     for index, data in tqdm(data_df.iterrows()):
-        if index // 10 == 0:
+        if (index + 1) // 10 == 0:
             sleep(3)
             st.write(f"3초간 프로세싱을 중단합니다.")
         try:
