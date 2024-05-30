@@ -80,6 +80,7 @@ if st.session_state['step'] == 5:
     port = st.session_state['port']
     temperature = st.session_state['temperature']
     frequency_penalty = st.session_state['frequency_penalty']
+    st.session_state['step'] = 0
     for index, data in tqdm(data_df.iterrows()):
         try:
             input_data = clean_text(str(data['입력']))
