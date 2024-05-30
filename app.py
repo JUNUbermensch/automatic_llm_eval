@@ -80,7 +80,7 @@ if st.session_state['step'] == 5:
     port = st.session_state['port']
     temperature = st.session_state['temperature']
     frequency_penalty = st.session_state['frequency_penalty']
-    
+    st.session_state['step'] = 0
     for index, data in tqdm(data_df.iterrows()):
         if (index + 1) % 10 == 0:
             sleep(3)
@@ -118,4 +118,3 @@ if st.session_state['step'] == 5:
         st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         st.write("평가 완료")
         uploaded_file = None
-        st.session_state['step'] = 0
