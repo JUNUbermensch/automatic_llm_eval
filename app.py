@@ -17,6 +17,7 @@ def LCS(s1, s2):
     return round(m[len(s1)][len(s2)]/len(s2), 2)
 
 st.title("Automatic Evaluator")
+uploaded_file = None
 
 def clean_text(text):
     return re.sub(r'[^\w\s]', '', text)
