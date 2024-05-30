@@ -17,7 +17,6 @@ def LCS(s1, s2):
     return round(m[len(s1)][len(s2)]/len(s2), 2)
 
 st.title("Automatic Evaluator")
-uploaded_file = None
 
 def clean_text(text):
     return re.sub(r'[^\w\s]', '', text)
@@ -114,3 +113,4 @@ if st.session_state['step'] == 5:
         result_file = convert_df(save_df)
         st.download_button("결과저장", result_file, "result.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         st.write("평가 완료")
+        uploaded_file = None
