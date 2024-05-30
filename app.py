@@ -39,10 +39,10 @@ if uploaded_file is not None:
     data_df = pd.read_excel(uploaded_file) # sample.xlsx 대신 불러올 엑셀 파일명 입력 - 이 스크립트와 같은 폴더 내에 있어야 합니다.
     save_df = pd.DataFrame(columns=['입력','예상 답변','답변','점수'])
 
-    user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200)
+    user_input = st.text_area("시스템 프롬프트를 입력하세요:", height=200, value="다음 질문에 한국어로 답변해주세요.")
     # ex) 다음 질문에 한국어로 답변해주세요.
     if user_input:
-        port = st.text_area("포트를 입력하세요:", height=200)
+        port = st.text_area("포트를 입력하세요:", height=200, value="http://211.39.140.232:9090/v1/chat/completions")
         # ex) http://211.39.140.232:9090/v1/chat/completions
         if port:
             for index,data in tqdm(data_df.iterrows()):
@@ -55,25 +55,26 @@ if uploaded_file is not None:
                     {"role": "system", "content": user_input},
                     {"role": "user", "content": input_data}
                 ]
-                
-                # POST 요청을 보내서 요약 결과를 가져옵니다.
-                response = requests.post(
-                    port,
-                    data=json.dumps({"model": "wisenut_llama", "messages": messages, "stream": False}),
-                    stream=False
-                )
-                
-                if response.status_code == 200:
-                    response_data = response.json()
-                    try:
-                        message = response_data["choices"][0]["message"]["content"]
-                        score = LCS(label, message)
-                        save_df.loc[len(save_df)] = [input_data, label, message, score]
-                    except Exception as e:
-                        st.write(f"{index+1}행을 처리하는 도중 오류가 발생했습니다.: {e}")
-                else:
-                    st.write(f"{index+1}번째 행 처리 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
-                st.write(f"{index+1}번째 행 처리중입니다.")
+                temperature = st.text_area("temperature 값을 입력하세요:", height=200, value="0")
+                if temperature:
+                    frequency_penalty = st.text_area("frequency_penalty 값을 입력하세요:", height=200, value="1")
+                    if frequency_penalty:
+                        # POST 요청을 보내서 요약 결과를 가져옵니다.
+                        response = requests.post(port, 
+                            data=json.dumps({"model": "wisenut_llama","messages":messages, "stream":False,"temperature": temperature,  "frequency_penalty": frequency_penalty}), 
+                            stream=False)
+                        
+                        if response.status_code == 200:
+                            response_data = response.json()
+                            try:
+                                message = response_data["choices"][0]["message"]["content"]
+                                score = LCS(label, message)
+                                save_df.loc[len(save_df)] = [input_data, label, message, score]
+                            except Exception as e:
+                                st.write(f"{index+1}행을 처리하는 도중 오류가 발생했습니다.: {e}")
+                        else:
+                            st.write(f"{index+1}번째 행 처리 중 오류가 발생했습니다. 상태 코드: {response.status_code}")
+                        st.write(f"{index+1}번째 행 처리중입니다.")
             
     if not save_df.empty:
         result_file = convert_df(save_df)
