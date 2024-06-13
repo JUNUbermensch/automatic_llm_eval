@@ -5,6 +5,7 @@ from tqdm import tqdm
 import requests
 import json
 import re
+from rouge import Rouge
 from time import sleep
 
 def LCS(s1, s2):
@@ -17,7 +18,16 @@ def LCS(s1, s2):
                 m[x][y] = max(m[x - 1][y], m[x][y - 1])
     return round(m[len(s1)][len(s2)]/len(s2), 2)
 
-st.title("Automatic Evaluator")
+def calc_rouge(label, message):
+    rouge = Rouge()
+    scores = rouge.get_scores(message, label)
+    rouge_1_f = scores[0]['rouge-1']['f']
+    rouge_2_f = scores[0]['rouge-2']['f']
+    rouge_l_f = scores[0]['rouge-l']['f']
+    final_output = f'ROUGE-1: {rouge_1_f:.4f}, ROUGE-2: {rouge_2_f:.4f}, ROUGE-l:{rouge_l_f:.4f}'
+    return final_output
+
+st.title("Automatic LLM Evaluator")
 
 def clean_text(text):
     return re.sub(r'[^\w\s]', '', text)
@@ -40,7 +50,7 @@ uploaded_file = st.file_uploader("아래에 평가를 위한 엑셀 파일을 �
 if uploaded_file is not None and st.session_state['step'] == 0:
     data_df = pd.read_excel(uploaded_file)
     st.session_state['data_df'] = data_df
-    save_df = pd.DataFrame(columns=['입력', '예상 답변', '답변', '점수'])
+    save_df = pd.DataFrame(columns=['입력', '예상 답변', '답변', 'LCS 점수', 'ROUGE 점수'])
     st.session_state['save_df'] = save_df
     st.session_state['step'] = 1
     st.experimental_rerun()
@@ -101,8 +111,9 @@ if st.session_state['step'] == 5:
             response_data = response.json()
             try:
                 message = response_data["choices"][0]["message"]["content"]
-                score = LCS(label, message)
-                save_df.loc[len(save_df)] = [input_data, label, message, score]
+                lcs_score = LCS(label, message)
+                rouge_score = calc_rouge(label, message)
+                save_df.loc[len(save_df)] = [input_data, label, message, lcs_score, rouge_score]
             except Exception as e:
                 st.write(f"{index+1}행을 처리하는 도중 오류가 발생했습니다.: {e}")
         else:
