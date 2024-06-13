@@ -1,2 +1,2 @@
 # automatic_llm_eval
-evaluate llm using squad or klue
+evaluate llm using lcs and rouge score
